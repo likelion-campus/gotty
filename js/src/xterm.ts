@@ -32,6 +32,17 @@ export class Xterm {
         this.term.on("open", () => {
             this.resizeListener();
             window.addEventListener("resize", () => { this.resizeListener(); });
+
+            if (!(window.parent instanceof Window)) {
+                this.term.viewport.viewportElement.addEventListener(
+                  "scroll",
+                  function (e) {
+                      window.parent.postMessage({
+                          type: 'scrollTop', payload: e.target.scrollTop
+                      }, '*');
+                  }
+                );
+            }
         });
 
         this.term.open(elem, true);
@@ -44,7 +55,16 @@ export class Xterm {
     };
 
     output(data: string) {
-        this.term.write(this.decoder.decode(data));
+        const content = this.decoder.decode(data);
+
+        this.term.write(content);
+
+        if (!(window.parent instanceof Window)) {
+            // @ts-ignore
+            window.parent.postMessage({
+                type: 'output', payload: content
+            }, '*');
+        }
     };
 
     showMessage(message: string, timeout: number) {

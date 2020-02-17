@@ -98,6 +98,22 @@ export class WebTTY {
                     connection.send(msgPing)
                 }, 30 * 1000);
 
+
+                window.addEventListener('message', e => {
+                    connection.send(msgInput + e.data);
+                });
+
+                if (!(window.parent instanceof Window)) {
+                    const onPointer = e => {
+                        window.parent.postMessage( {
+                            type: e.type, clientX: e.clientX, clientY: e.clientY
+                        }, '*' );
+                    };
+
+                    window.addEventListener('pointermove', onPointer);
+                    window.addEventListener('pointerdown', onPointer);
+                    window.addEventListener('pointerup', onPointer);
+                }
             });
 
             connection.onReceive((data) => {
