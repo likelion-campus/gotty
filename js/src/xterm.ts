@@ -50,6 +50,19 @@ export class Xterm {
         this.decoder = new lib.UTF8Decoder()
     };
 
+    storageAvailable(type) {
+        var storage;
+        try {
+            storage = window[type];
+            var x = '__storage_test__';
+            storage.setItem(x, x);
+            storage.removeItem(x);
+            return true;
+        } catch (e) {
+            return false
+        }
+    }
+
     info(): { columns: number, rows: number } {
         return { columns: this.term.cols, rows: this.term.rows };
     };
@@ -57,6 +70,15 @@ export class Xterm {
     output(data: string) {
         const content = this.decoder.decode(data);
 
+        if (this.storageAvailable('localStorage')) {
+            if (JSON.parse(localStorage.reconnection)) {
+                if (content.trim() != '[?1034h') {
+                    localStorage.setItem('reconnection', 'false');
+                }
+                return;
+            }
+            localStorage.setItem('reconnection', 'false');
+        }
         this.term.write(content);
 
         if (!(window.parent instanceof Window)) {
@@ -71,6 +93,11 @@ export class Xterm {
         this.message.textContent = message;
         this.elem.appendChild(this.message);
 
+        if (this.message.textContent == 'Connection Closed') {
+            if (this.storageAvailable('localStorage')) {
+                localStorage.setItem('reconnection', 'true');
+            }
+        }
         if (this.messageTimer) {
             clearTimeout(this.messageTimer);
         }
