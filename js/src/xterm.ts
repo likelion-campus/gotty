@@ -17,7 +17,7 @@ export class Xterm {
 
     constructor(elem: HTMLElement) {
         this.elem = elem;
-        this.term = new bare();
+        this.term = new bare({ scrollback: 10000 });
 
         this.message = elem.ownerDocument.createElement("div");
         this.message.className = "xterm-overlay";
