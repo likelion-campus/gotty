@@ -48,6 +48,10 @@ export class Xterm {
         this.term.open(elem, true);
 
         this.decoder = new lib.UTF8Decoder()
+
+        if (this.storageAvailable('localStorage')) {
+            localStorage.setItem('reconnection', 'false');
+        }
     };
 
     storageAvailable(type) {
@@ -70,9 +74,12 @@ export class Xterm {
     output(data: string) {
         const content = this.decoder.decode(data);
 
+        // reconnect 이후 최초output은 무시
         if (this.storageAvailable('localStorage')) {
             if (JSON.parse(localStorage.reconnection)) {
+                console.log('localStorage.reconnection : '+localStorage.reconnection+', content : '+content);
                 if (content.trim() != '[?1034h') {
+
                     localStorage.setItem('reconnection', 'false');
                 }
                 return;
