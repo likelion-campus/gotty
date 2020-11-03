@@ -115,7 +115,17 @@ export class Xterm {
 
     reset(): void {
         this.removeMessage();
-        this.term.clear();
+        // this.term.clear();
+
+        if (this.term.x != 0) {
+            this.term.scroll();
+            this.term.x = 0;
+        }
+        for (let i = this.term.y; i < this.term.rows; i++) {
+            this.term.eraseLine(i);
+        }
+
+        this.term.refresh(0, this.term.rows - 1);
     }
 
     close(): void {
