@@ -62,7 +62,7 @@ func New() (*Watcher, error) {
 	}
 	_watcher.AddFilterHook(ignoreFilterHookFunc)
 
-	watcherWrapper.start(cwd, time.Millisecond * 2000)
+	watcherWrapper.start(cwd, time.Millisecond * 1000)
 	
 	return &watcherWrapper, nil
 }
