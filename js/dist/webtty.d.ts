@@ -9,6 +9,7 @@ export declare const msgPong = "2";
 export declare const msgSetWindowTitle = "3";
 export declare const msgSetPreferences = "4";
 export declare const msgSetReconnect = "5";
+export declare const msgFsEvent = "F";
 export interface Terminal {
     info(): {
         columns: number;
