@@ -18,6 +18,9 @@ type WebTTY struct {
 	// PTY Slave
 	slave Slave
 
+	// File system watcher listener
+	watcherListenerChannel chan []byte
+
 	windowTitle []byte
 	permitWrite bool
 	columns     int
@@ -33,10 +36,12 @@ type WebTTY struct {
 // masterConn is a connection to the PTY master,
 // typically it's a websocket connection to a client.
 // slave is a PTY slave such as a local command with a PTY.
-func New(masterConn Master, slave Slave, options ...Option) (*WebTTY, error) {
+func New(masterConn Master, slave Slave, watcherListenerChannel chan []byte, options ...Option) (*WebTTY, error) {
 	wt := &WebTTY{
 		masterConn: masterConn,
 		slave:      slave,
+
+		watcherListenerChannel: watcherListenerChannel,
 
 		permitWrite: false,
 		columns:     0,
@@ -65,6 +70,18 @@ func (wt *WebTTY) Run(ctx context.Context) error {
 	}
 
 	errs := make(chan error, 2)
+
+	go func() {
+		errs <- func() error {
+			for {
+				data := <- wt.watcherListenerChannel
+				err = wt.handleWatcherListenerEvent(data)
+				if err != nil {
+					return err
+				}
+			}
+		}()
+	}()
 
 	go func() {
 		errs <- func() error {
@@ -128,6 +145,16 @@ func (wt *WebTTY) sendInitializeMessage() error {
 		if err != nil {
 			return errors.Wrapf(err, "failed to set preferences")
 		}
+	}
+
+	return nil
+}
+
+func (wt *WebTTY) handleWatcherListenerEvent(data []byte) error {
+	safeMessage := base64.StdEncoding.EncodeToString(data)
+	err := wt.masterWrite(append([]byte{FsEvent}, []byte(safeMessage)...))
+	if err != nil {
+		return errors.Wrapf(err, "failed to send message to master")
 	}
 
 	return nil

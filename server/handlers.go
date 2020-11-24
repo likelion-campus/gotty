@@ -158,7 +158,11 @@ func (server *Server) processWSConn(ctx context.Context, conn *websocket.Conn) e
 		opts = append(opts, webtty.WithMasterPreferences(server.options.Preferences))
 	}
 
-	tty, err := webtty.New(&wsWrapper{conn}, slave, opts...)
+	watcherListenereChannel := make(chan []byte)
+	server.watcher.Listen(watcherListenereChannel)
+	defer server.watcher.Unlisten(watcherListenereChannel)
+
+	tty, err := webtty.New(&wsWrapper{conn}, slave, watcherListenereChannel, opts...)
 	if err != nil {
 		return errors.Wrapf(err, "failed to create webtty")
 	}
