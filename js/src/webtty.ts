@@ -139,7 +139,6 @@ export class WebTTY {
                         break;
                     case msgFsEvent:
                         const msg = atob(payload)
-                        console.log("Received fs-event: " + msg);
                         if (Window == null || !(window.parent instanceof Window)) {
                             // @ts-ignore
                             window.parent.postMessage({
