@@ -45,7 +45,7 @@ func New() (*Watcher, error) {
 			"/\\.bash_history(?:/|$)",
 			"/\\.python_history(?:/|$)",
 			"/__pycache__(?:/|$)",
-			"/cache(?:/|$)",
+			"/\\.cache(?:/|$)",
 			"/sqlite3-journal$",
 			"\\.log$",
 			"\\.swp$",
