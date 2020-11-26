@@ -20,6 +20,7 @@ import (
 
 	"github.com/yudai/gotty/pkg/homedir"
 	"github.com/yudai/gotty/pkg/randomstring"
+	"github.com/yudai/gotty/watcher"
 	"github.com/yudai/gotty/webtty"
 )
 
@@ -31,6 +32,8 @@ type Server struct {
 	upgrader      *websocket.Upgrader
 	indexTemplate *template.Template
 	titleTemplate *noesctmpl.Template
+
+	watcher *watcher.Watcher
 }
 
 // New creates a new instance of Server.
@@ -68,9 +71,15 @@ func New(factory Factory, options *Options) (*Server, error) {
 		}
 	}
 
+	watcher, err := watcher.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return &Server{
 		factory: factory,
 		options: options,
+		watcher: watcher,
 
 		upgrader: &websocket.Upgrader{
 			ReadBufferSize:  1024,

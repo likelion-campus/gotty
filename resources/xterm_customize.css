@@ -1,5 +1,9 @@
 .terminal {
     font-family: "DejaVu Sans Mono", "Everson Mono", FreeMono, Menlo, Terminal, monospace, "Apple Symbols";
+    background-color: #292a2f;
+    color: #feffff;
+    font-size: 13px;
+    line-height: 1.38;
 }
 
 .xterm-overlay {

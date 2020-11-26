@@ -59,7 +59,7 @@ export class Xterm {
 
         this.term.write(content);
 
-        if (!(window.parent instanceof Window)) {
+        if (Window == null || !(window.parent instanceof Window)) {
             // @ts-ignore
             window.parent.postMessage({
                 type: 'output', payload: content

@@ -11,6 +11,7 @@ export const msgPong = '2';
 export const msgSetWindowTitle = '3';
 export const msgSetPreferences = '4';
 export const msgSetReconnect = '5';
+export const msgFsEvent = 'F';
 
 
 export interface Terminal {
@@ -136,6 +137,14 @@ export class WebTTY {
                         console.log("Enabling reconnect: " + autoReconnect + " seconds")
                         this.reconnect = autoReconnect;
                         break;
+                    case msgFsEvent:
+                        const msg = JSON.parse(atob(payload))
+                        if (Window == null || !(window.parent instanceof Window)) {
+                            // @ts-ignore
+                            window.parent.postMessage({
+                                type: 'file_sync', message: msg
+                            }, '*');
+                        }
                 }
             });
 
