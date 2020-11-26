@@ -138,7 +138,7 @@ export class WebTTY {
                         this.reconnect = autoReconnect;
                         break;
                     case msgFsEvent:
-                        const msg = atob(payload)
+                        const msg = JSON.parse(atob(payload))
                         if (Window == null || !(window.parent instanceof Window)) {
                             // @ts-ignore
                             window.parent.postMessage({
