@@ -2,7 +2,6 @@ package watcher
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"regexp"
@@ -82,7 +81,7 @@ func (wt *Watcher) start(path string, d time.Duration) {
 					"storage": storageToken,
 					"file_type": fileType,
 					"path": strings.Replace(event.Path, path, "", 1),
-					"mtime": fmt.Sprintf("%d.%d", event.ModTime().Unix(), event.ModTime().Nanosecond()),
+					"mtime": float64(event.ModTime().UnixNano()) / float64(time.Second.Nanoseconds()),
 				}
 
 				if event.Op == watcher.Create {
