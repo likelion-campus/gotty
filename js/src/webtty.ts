@@ -99,14 +99,13 @@ export class WebTTY {
                     connection.send(msgPing)
                 }, 30 * 1000);
 
-
-                window.addEventListener('message', e => {
-                    // TODO: 강의 스튜디오가 현재 프로젝트 중단 상태라 어떤 도메인으로써 넘어오는지 몰라 '.codelion.net'에서 요청왔을 경우만
-                    // 이벤트를 처리하도록한다. 후에 강의라이언 도메인이 무엇인지 알게된다면 이 곳을 수정하여야 한다.
-                    if (e.origin != null && e.origin.search('\\.codelion\\.net$') != -1) {
-                        connection.send(msgInput + e.data);
-                    }
-                });
+                // window.addEventListener('message', e => {
+                //     // TODO: 강의 스튜디오가 현재 프로젝트 중단 상태라 어떤 도메인으로써 넘어오는지 몰라 '.codelion.net'에서 요청왔을 경우만
+                //     // 이벤트를 처리하도록한다. 후에 강의라이언 도메인이 무엇인지 알게된다면 이 곳을 수정하여야 한다.
+                //     if (e.origin != null && e.origin.search('\\.codelion\\.net$') != -1) {
+                //         connection.send(msgInput + e.data);
+                //     }
+                // });
 
                 if (!(window.parent instanceof Window)) {
                     const onPointer = e => {
